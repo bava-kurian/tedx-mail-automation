@@ -3,6 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 from datetime import datetime
 
 # Email Configuration
@@ -54,8 +55,7 @@ def create_email_template(recipient_email):
 
     <p>The TEDx experience is about engaging with new ideas and connecting with others. We look forward to seeing you at this gathering of minds!</p>
 
-    <p>Here's our event schedule:</p>
-    <img src="cid:schedule" width="600" style="margin: 20px 0;">
+    <p>Please find the detailed event schedule attached to this email.</p>
 
     <p>Warm regards,<br>
     TEDxAJCE Team</p>
@@ -88,11 +88,11 @@ def send_email(recipient_email, image_path):
         logo_img.add_header('Content-ID', '<logo>')
         msg.attach(logo_img)
     
-    # Attach schedule image inline
-    with open('schedule.jpg', 'rb') as f:
-        schedule_img = MIMEImage(f.read())
-        schedule_img.add_header('Content-ID', '<schedule>')
-        msg.attach(schedule_img)
+    # Attach schedule PDF
+    with open('schedule.pdf', 'rb') as f:
+        pdf = MIMEApplication(f.read(), _subtype='pdf')
+        pdf.add_header('Content-Disposition', 'attachment', filename='TEDxAJCE_2025_Schedule.pdf')
+        msg.attach(pdf)
     
     # Attach personalized invitation
     with open(image_path, 'rb') as f:
